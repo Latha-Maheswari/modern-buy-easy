@@ -80,7 +80,7 @@ const Cart = () => {
                 />
                 <div className="flex-1">
                   <h3 className="font-medium mb-1">{item.name}</h3>
-                  <p className="text-blue-600 font-semibold">${item.price}</p>
+                  <p className="text-blue-600 font-semibold">₹{item.price}</p>
                   
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center border rounded-lg">
@@ -127,20 +127,20 @@ const Cart = () => {
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Subtotal ({totalItems} items)</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>₹{totalPrice.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span>Shipping</span>
+              <span>Delivery Charges</span>
               <span className="text-green-600">Free</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span>Tax</span>
-              <span>${(totalPrice * 0.08).toFixed(2)}</span>
+              <span>GST (18%)</span>
+              <span>₹{(totalPrice * 0.18).toFixed(2)}</span>
             </div>
             <Separator />
             <div className="flex justify-between font-semibold">
-              <span>Total</span>
-              <span className="text-blue-600">${(totalPrice * 1.08).toFixed(2)}</span>
+              <span>Total Amount</span>
+              <span className="text-blue-600">₹{(totalPrice * 1.18).toFixed(2)}</span>
             </div>
           </div>
         </CardContent>
@@ -150,7 +150,7 @@ const Cart = () => {
       <div className="fixed bottom-16 left-0 right-0 bg-white border-t p-4 z-10">
         <div className="max-w-md mx-auto space-y-3">
           <div className="text-center">
-            <p className="text-sm text-gray-600">Total: ${(totalPrice * 1.08).toFixed(2)}</p>
+            <p className="text-sm text-gray-600">Total: ₹{(totalPrice * 1.18).toFixed(2)}</p>
           </div>
           <Button
             onClick={() => navigate('/checkout')}

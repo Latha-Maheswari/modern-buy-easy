@@ -16,6 +16,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
+import SellerBackend from "./pages/SellerBackend";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -66,6 +67,8 @@ const App = () => (
                   <Profile />
                 </ProtectedRoute>
               } />
+              {/* Hidden seller backend - no auth required */}
+              <Route path="/dashboard-9183-admin-only" element={<SellerBackend />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </CartProvider>

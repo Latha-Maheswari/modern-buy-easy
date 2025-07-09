@@ -20,33 +20,33 @@ const ProductListing = () => {
   const searchQuery = searchParams.get('q');
   const title = searchQuery ? `Search: "${searchQuery}"` : `${category?.charAt(0).toUpperCase()}${category?.slice(1)}`;
 
-  // Mock products data
+  // Indian products data
   const products = [
     {
       id: '1',
-      name: 'Wireless Bluetooth Headphones',
-      price: 99.99,
-      originalPrice: 149.99,
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
+      name: 'Lakme Absolute Matte Lipstick',
+      price: 350,
+      originalPrice: 450,
+      image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400',
       rating: 4.5,
       reviews: 234,
       inStock: true,
     },
     {
       id: '2',
-      name: 'Smart Fitness Watch',
-      price: 199.99,
-      originalPrice: 299.99,
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-      rating: 4.8,
-      reviews: 456,
+      name: 'boAt Airdopes 131 Earbuds',
+      price: 1299,
+      originalPrice: 1999,
+      image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400',
+      rating: 4.2,
+      reviews: 856,
       inStock: true,
     },
     {
       id: '3',
-      name: 'Professional Laptop Backpack',
-      price: 49.99,
-      originalPrice: 79.99,
+      name: 'Wildcraft Laptop Backpack',
+      price: 1599,
+      originalPrice: 2499,
       image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',
       rating: 4.3,
       reviews: 123,
@@ -54,19 +54,19 @@ const ProductListing = () => {
     },
     {
       id: '4',
-      name: 'Premium Coffee Maker',
-      price: 79.99,
-      originalPrice: 129.99,
-      image: 'https://images.unsplash.com/photo-1559056199-641b071db55a?w=400',
+      name: 'Philips LED Desk Lamp',
+      price: 899,
+      originalPrice: 1499,
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
       rating: 4.6,
       reviews: 189,
       inStock: true,
     },
     {
       id: '5',
-      name: 'Eco-Friendly Yoga Mat',
-      price: 24.99,
-      originalPrice: 49.99,
+      name: 'Strauss Yoga Mat Anti-Skid',
+      price: 699,
+      originalPrice: 1299,
       image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400',
       rating: 4.4,
       reviews: 78,
@@ -74,10 +74,10 @@ const ProductListing = () => {
     },
     {
       id: '6',
-      name: 'Wireless Charging Pad',
-      price: 29.99,
-      originalPrice: 49.99,
-      image: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400',
+      name: 'Portronics Power Bank 10000mAh',
+      price: 999,
+      originalPrice: 1599,
+      image: 'https://images.unsplash.com/photo-1609592669991-53833df0b5b4?w=400',
       rating: 4.2,
       reviews: 95,
       inStock: true,
@@ -135,9 +135,9 @@ const ProductListing = () => {
             
             <div className={`flex items-center ${viewMode === 'grid' ? 'justify-between' : 'justify-between mt-2'}`}>
               <div>
-                <span className="font-semibold text-blue-600">${product.price}</span>
+                <span className="font-semibold text-blue-600">₹{product.price}</span>
                 <span className="text-xs text-gray-500 line-through ml-1">
-                  ${product.originalPrice}
+                  ₹{product.originalPrice}
                 </span>
               </div>
               <Button

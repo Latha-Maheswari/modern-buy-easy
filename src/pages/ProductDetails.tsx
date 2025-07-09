@@ -17,60 +17,60 @@ const ProductDetails = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  // Mock product data
+  // Mock Indian product data
   const product = {
     id: id || '1',
-    name: 'Wireless Bluetooth Headphones',
-    price: 99.99,
-    originalPrice: 149.99,
+    name: 'Lakme Absolute Matte Lipstick - Red Rush',
+    price: 350,
+    originalPrice: 450,
     images: [
-      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600',
-      'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=600',
-      'https://images.unsplash.com/photo-1487215078519-e21cc028cb29?w=600',
+      'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600',
+      'https://images.unsplash.com/photo-1592327986060-5d9b6905e71c?w=600',
+      'https://images.unsplash.com/photo-1583241800098-4b5fb38c4bf6?w=600',
     ],
     rating: 4.5,
-    reviews: 234,
+    reviews: 1234,
     inStock: true,
-    stockCount: 15,
-    description: 'Experience premium sound quality with these wireless Bluetooth headphones. Featuring advanced noise cancellation, 30-hour battery life, and crystal-clear audio for the ultimate listening experience.',
+    stockCount: 25,
+    description: 'Get gorgeous matte lips that last all day with Lakme Absolute Matte Lipstick. This long-lasting formula provides intense color payoff with a comfortable matte finish. Perfect for the modern Indian woman who wants style that lasts.',
     features: [
-      'Active Noise Cancellation',
-      '30-hour battery life',
-      'Quick charge: 5 minutes for 3 hours',
-      'Premium comfort design',
-      'Voice assistant compatible',
+      'Long-lasting matte finish',
+      'Intense color payoff',
+      'Comfortable wear for 8+ hours',
+      'Cruelty-free formula',
+      'Available in 12 stunning shades',
     ],
     specifications: {
-      'Brand': 'AudioTech',
-      'Model': 'AT-WH1000',
-      'Connectivity': 'Bluetooth 5.0',
-      'Battery Life': '30 hours',
-      'Weight': '250g',
-      'Warranty': '2 years',
+      'Brand': 'Lakme',
+      'Shade': 'Red Rush',
+      'Finish': 'Matte',
+      'Weight': '3.7g',
+      'Country of Origin': 'India',
+      'Best Before': '36 months from mfg',
     },
   };
 
   const reviews = [
     {
       id: 1,
-      user: 'John D.',
+      user: 'Priya S.',
       rating: 5,
       date: '2 weeks ago',
-      comment: 'Excellent sound quality and comfort. Best headphones I\'ve owned!',
+      comment: 'Amazing long-lasting lipstick! Perfect shade for Indian skin tone. Highly recommend!',
     },
     {
       id: 2,
-      user: 'Sarah M.',
+      user: 'Anjali M.',
       rating: 4,
       date: '1 month ago',
-      comment: 'Great noise cancellation, perfect for commuting.',
+      comment: 'Great quality and the color is exactly as shown. Good value for money.',
     },
     {
       id: 3,
-      user: 'Mike R.',
+      user: 'Kavya R.',
       rating: 5,
       date: '1 month ago',
-      comment: 'Worth every penny. The battery life is incredible.',
+      comment: 'My go-to lipstick now! Doesn\'t dry out lips and lasts through meals.',
     },
   ];
 
@@ -154,10 +154,10 @@ const ProductDetails = () => {
         </div>
 
         <div className="flex items-center gap-3 mb-4">
-          <span className="text-2xl font-bold text-blue-600">${product.price}</span>
-          <span className="text-lg text-gray-500 line-through">${product.originalPrice}</span>
+          <span className="text-2xl font-bold text-blue-600">₹{product.price}</span>
+          <span className="text-lg text-gray-500 line-through">₹{product.originalPrice}</span>
           <Badge variant="destructive" className="text-sm">
-            Save ${(product.originalPrice - product.price).toFixed(2)}
+            Save ₹{(product.originalPrice - product.price)}
           </Badge>
         </div>
 
@@ -165,15 +165,15 @@ const ProductDetails = () => {
         <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="text-center">
             <Truck className="h-5 w-5 mx-auto text-green-600 mb-1" />
-            <span className="text-xs text-gray-600">Free Shipping</span>
+            <span className="text-xs text-gray-600">Free Delivery</span>
           </div>
           <div className="text-center">
             <Shield className="h-5 w-5 mx-auto text-blue-600 mb-1" />
-            <span className="text-xs text-gray-600">2 Year Warranty</span>
+            <span className="text-xs text-gray-600">100% Authentic</span>
           </div>
           <div className="text-center">
             <Zap className="h-5 w-5 mx-auto text-orange-600 mb-1" />
-            <span className="text-xs text-gray-600">Fast Delivery</span>
+            <span className="text-xs text-gray-600">Same Day Delivery</span>
           </div>
         </div>
       </div>
@@ -181,7 +181,7 @@ const ProductDetails = () => {
       {/* Description */}
       <Card className="mt-2">
         <CardContent className="p-4">
-          <h3 className="font-semibold mb-2">Description</h3>
+          <h3 className="font-semibold mb-2">About this product</h3>
           <p className="text-gray-600 text-sm leading-relaxed">{product.description}</p>
         </CardContent>
       </Card>
@@ -204,7 +204,7 @@ const ProductDetails = () => {
       {/* Specifications */}
       <Card className="mt-2">
         <CardContent className="p-4">
-          <h3 className="font-semibold mb-3">Specifications</h3>
+          <h3 className="font-semibold mb-3">Product Details</h3>
           <div className="space-y-2">
             {Object.entries(product.specifications).map(([key, value]) => (
               <div key={key} className="flex justify-between text-sm">
@@ -220,7 +220,7 @@ const ProductDetails = () => {
       <Card className="mt-2">
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold">Reviews ({product.reviews})</h3>
+            <h3 className="font-semibold">Customer Reviews ({product.reviews})</h3>
             <Button variant="ghost" size="sm" className="text-blue-600">
               View All
             </Button>
