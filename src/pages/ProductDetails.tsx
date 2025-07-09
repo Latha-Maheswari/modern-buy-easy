@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Heart, Share2, Star, ShoppingCart, Zap, Shield, Truck } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
+import { getProductById } from '../data/products';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -17,38 +18,18 @@ const ProductDetails = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  // Mock Indian product data
-  const product = {
-    id: id || '1',
-    name: 'Lakme Absolute Matte Lipstick - Red Rush',
-    price: 350,
-    originalPrice: 450,
-    images: [
-      'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=600',
-      'https://images.unsplash.com/photo-1592327986060-5d9b6905e71c?w=600',
-      'https://images.unsplash.com/photo-1583241800098-4b5fb38c4bf6?w=600',
-    ],
-    rating: 4.5,
-    reviews: 1234,
-    inStock: true,
-    stockCount: 25,
-    description: 'Get gorgeous matte lips that last all day with Lakme Absolute Matte Lipstick. This long-lasting formula provides intense color payoff with a comfortable matte finish. Perfect for the modern Indian woman who wants style that lasts.',
-    features: [
-      'Long-lasting matte finish',
-      'Intense color payoff',
-      'Comfortable wear for 8+ hours',
-      'Cruelty-free formula',
-      'Available in 12 stunning shades',
-    ],
-    specifications: {
-      'Brand': 'Lakme',
-      'Shade': 'Red Rush',
-      'Finish': 'Matte',
-      'Weight': '3.7g',
-      'Country of Origin': 'India',
-      'Best Before': '36 months from mfg',
-    },
-  };
+  const product = getProductById(id || '');
+
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold mb-2">Product not found</h2>
+          <Button onClick={() => navigate('/home')}>Go back to home</Button>
+        </div>
+      </div>
+    );
+  }
 
   const reviews = [
     {
@@ -56,21 +37,21 @@ const ProductDetails = () => {
       user: 'Priya S.',
       rating: 5,
       date: '2 weeks ago',
-      comment: 'Amazing long-lasting lipstick! Perfect shade for Indian skin tone. Highly recommend!',
+      comment: 'Amazing product! Perfect quality and fast delivery. Highly recommend!',
     },
     {
       id: 2,
       user: 'Anjali M.',
       rating: 4,
       date: '1 month ago',
-      comment: 'Great quality and the color is exactly as shown. Good value for money.',
+      comment: 'Great quality and the price is very reasonable. Good value for money.',
     },
     {
       id: 3,
       user: 'Kavya R.',
       rating: 5,
       date: '1 month ago',
-      comment: 'My go-to lipstick now! Doesn\'t dry out lips and lasts through meals.',
+      comment: 'Excellent product! Exactly as described and works perfectly.',
     },
   ];
 
@@ -80,7 +61,7 @@ const ProductDetails = () => {
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.images[0],
+        image: product.image,
       });
     }
     toast.success(`Added ${quantity} item(s) to cart!`);
@@ -140,9 +121,14 @@ const ProductDetails = () => {
       <div className="bg-white mt-2 p-4">
         <div className="flex items-start justify-between mb-2">
           <h1 className="text-xl font-semibold flex-1">{product.name}</h1>
-          <Badge variant="outline" className="text-green-600 border-green-600">
-            In Stock ({product.stockCount})
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-green-600 border-green-600">
+              In Stock ({product.stockCount})
+            </Badge>
+            {product.isNewArrival && (
+              <Badge className="bg-green-500">New Arrival</Badge>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2 mb-3">

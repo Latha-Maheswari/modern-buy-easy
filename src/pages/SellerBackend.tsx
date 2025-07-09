@@ -4,41 +4,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Edit, Trash2, Upload, Download, Package, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, Download, Package, Eye, TrendingUp, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { products as initialProducts } from '../data/products';
 
 const SellerBackend = () => {
   const [activeTab, setActiveTab] = useState('products');
   const [showAddProduct, setShowAddProduct] = useState(false);
 
-  // Mock product data
-  const [products, setProducts] = useState([
-    {
-      id: '1',
-      name: 'Matte Lipstick Set',
-      price: 499,
-      originalPrice: 799,
-      category: 'Makeup & Beauty',
-      stock: 25,
-      status: 'In Stock',
-      isNewArrival: false,
-      images: ['https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400'],
-    },
-    {
-      id: '2',
-      name: 'Smart Fitness Watch',
-      price: 2499,
-      originalPrice: 3999,
-      category: 'Electronics',
-      stock: 0,
-      status: 'Out of Stock',
-      isNewArrival: true,
-      images: ['https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400'],
-    },
-  ]);
+  const [products, setProducts] = useState(initialProducts);
 
   const [newProduct, setNewProduct] = useState({
     name: '',
@@ -49,6 +25,8 @@ const SellerBackend = () => {
     description: '',
     isNewArrival: false,
     images: [''],
+    features: [''],
+    specifications: { Brand: '', Material: '', Color: '' },
   });
 
   const categories = [
@@ -73,9 +51,16 @@ const SellerBackend = () => {
       originalPrice: parseInt(newProduct.originalPrice) || parseInt(newProduct.price),
       category: newProduct.category,
       stock: parseInt(newProduct.stock) || 0,
-      status: parseInt(newProduct.stock) > 0 ? 'In Stock' : 'Out of Stock',
+      stockCount: parseInt(newProduct.stock) || 0,
+      inStock: parseInt(newProduct.stock) > 0,
       isNewArrival: newProduct.isNewArrival,
+      image: newProduct.images[0] || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400',
       images: newProduct.images.filter(img => img.trim() !== ''),
+      description: newProduct.description,
+      features: newProduct.features.filter(f => f.trim() !== ''),
+      specifications: newProduct.specifications,
+      rating: 4.0,
+      reviews: 0,
     };
 
     setProducts([...products, product]);
@@ -88,6 +73,8 @@ const SellerBackend = () => {
       description: '',
       isNewArrival: false,
       images: [''],
+      features: [''],
+      specifications: { Brand: '', Material: '', Color: '' },
     });
     setShowAddProduct(false);
     toast.success('Product added successfully!');
@@ -101,7 +88,7 @@ const SellerBackend = () => {
   const toggleProductStatus = (id: string) => {
     setProducts(products.map(p => 
       p.id === id 
-        ? { ...p, status: p.status === 'In Stock' ? 'Out of Stock' : 'In Stock' }
+        ? { ...p, inStock: !p.inStock, stockCount: p.inStock ? 0 : 10 }
         : p
     ));
     toast.success('Product status updated!');
@@ -111,7 +98,7 @@ const SellerBackend = () => {
     const csvContent = "data:text/csv;charset=utf-8," 
       + "Name,Price,Original Price,Category,Stock,Status,New Arrival\n"
       + products.map(p => 
-          `"${p.name}",${p.price},${p.originalPrice},"${p.category}",${p.stock},"${p.status}",${p.isNewArrival}`
+          `"${p.name}",${p.price},${p.originalPrice},"${p.category}",${p.stockCount},"${p.inStock ? 'In Stock' : 'Out of Stock'}",${p.isNewArrival}`
         ).join("\n");
 
     const encodedUri = encodeURI(csvContent);
@@ -124,12 +111,38 @@ const SellerBackend = () => {
     toast.success('Products exported to CSV!');
   };
 
+  const addImageField = () => {
+    setNewProduct({
+      ...newProduct,
+      images: [...newProduct.images, '']
+    });
+  };
+
+  const updateImageField = (index: number, value: string) => {
+    const newImages = [...newProduct.images];
+    newImages[index] = value;
+    setNewProduct({ ...newProduct, images: newImages });
+  };
+
+  const addFeatureField = () => {
+    setNewProduct({
+      ...newProduct,
+      features: [...newProduct.features, '']
+    });
+  };
+
+  const updateFeatureField = (index: number, value: string) => {
+    const newFeatures = [...newProduct.features];
+    newFeatures[index] = value;
+    setNewProduct({ ...newProduct, features: newFeatures });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Seller Dashboard</h1>
-        <p className="text-gray-600">Manage your products and inventory</p>
+        <p className="text-gray-600">Manage your products and inventory - Lovable India</p>
       </div>
 
       {/* Stats Cards */}
@@ -153,7 +166,7 @@ const SellerBackend = () => {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">In Stock</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {products.filter(p => p.status === 'In Stock').length}
+                  {products.filter(p => p.inStock).length}
                 </p>
               </div>
             </div>
@@ -163,7 +176,7 @@ const SellerBackend = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center">
-              <Upload className="h-8 w-8 text-orange-600" />
+              <TrendingUp className="h-8 w-8 text-orange-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">New Arrivals</p>
                 <p className="text-2xl font-bold text-gray-900">
@@ -177,11 +190,11 @@ const SellerBackend = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center">
-              <Trash2 className="h-8 w-8 text-red-600" />
+              <AlertCircle className="h-8 w-8 text-red-600" />
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Out of Stock</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {products.filter(p => p.status === 'Out of Stock').length}
+                  {products.filter(p => !p.inStock).length}
                 </p>
               </div>
             </div>
@@ -294,28 +307,42 @@ const SellerBackend = () => {
                 <div key={index} className="flex gap-2 mb-2">
                   <Input
                     value={img}
-                    onChange={(e) => {
-                      const newImages = [...newProduct.images];
-                      newImages[index] = e.target.value;
-                      setNewProduct({...newProduct, images: newImages});
-                    }}
+                    onChange={(e) => updateImageField(index, e.target.value)}
                     placeholder="https://example.com/image.jpg"
                   />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setNewProduct({
-                        ...newProduct,
-                        images: [...newProduct.images, '']
-                      });
-                    }}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
                 </div>
               ))}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addImageField}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Image
+              </Button>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Product Features</label>
+              {newProduct.features.map((feature, index) => (
+                <div key={index} className="flex gap-2 mb-2">
+                  <Input
+                    value={feature}
+                    onChange={(e) => updateFeatureField(index, e.target.value)}
+                    placeholder="Enter product feature"
+                  />
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addFeatureField}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add Feature
+              </Button>
             </div>
 
             <div className="flex gap-2">
@@ -341,7 +368,7 @@ const SellerBackend = () => {
               <div key={product.id} className="border rounded-lg p-4">
                 <div className="flex items-start gap-4">
                   <img
-                    src={product.images[0]}
+                    src={product.image}
                     alt={product.name}
                     className="w-16 h-16 object-cover rounded-lg"
                   />
@@ -361,9 +388,9 @@ const SellerBackend = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge 
-                          variant={product.status === 'In Stock' ? 'default' : 'destructive'}
+                          variant={product.inStock ? 'default' : 'destructive'}
                         >
-                          {product.status}
+                          {product.inStock ? 'In Stock' : 'Out of Stock'}
                         </Badge>
                         {product.isNewArrival && (
                           <Badge variant="secondary">New Arrival</Badge>
@@ -372,7 +399,7 @@ const SellerBackend = () => {
                     </div>
                     
                     <div className="flex items-center justify-between mt-3">
-                      <span className="text-sm text-gray-600">Stock: {product.stock}</span>
+                      <span className="text-sm text-gray-600">Stock: {product.stockCount}</span>
                       <div className="flex gap-2">
                         <Button
                           size="sm"

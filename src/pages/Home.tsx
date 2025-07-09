@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Search, Star, Heart, ChevronRight } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
+import { getFeaturedProducts, getNewArrivals } from '../data/products';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -24,59 +25,8 @@ const Home = () => {
     { name: 'Books', icon: '📚', color: 'bg-indigo-100 text-indigo-800' },
   ];
 
-  const featuredProducts = [
-    {
-      id: '1',
-      name: 'Matte Lipstick Set',
-      price: 499,
-      originalPrice: 799,
-      image: 'https://images.unsplash.com/photo-1586495777744-4413f21062fa?w=400',
-      rating: 4.5,
-      reviews: 234,
-      badge: 'Best Seller',
-    },
-    {
-      id: '2',
-      name: 'Smart Fitness Watch',
-      price: 2499,
-      originalPrice: 3999,
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-      rating: 4.8,
-      reviews: 456,
-      badge: 'New Arrival',
-    },
-    {
-      id: '3',
-      name: 'Designer Handbag',
-      price: 1299,
-      originalPrice: 1999,
-      image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',
-      rating: 4.3,
-      reviews: 123,
-      badge: 'Trending',
-    },
-  ];
-
-  const dailyDeals = [
-    {
-      id: '4',
-      name: 'LED Desk Lamp',
-      price: 899,
-      originalPrice: 1499,
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-      rating: 4.6,
-      discount: '40% OFF',
-    },
-    {
-      id: '5',
-      name: 'Yoga Mat Premium',
-      price: 699,
-      originalPrice: 1299,
-      image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400',
-      rating: 4.4,
-      discount: '46% OFF',
-    },
-  ];
+  const featuredProducts = getFeaturedProducts();
+  const newArrivals = getNewArrivals();
 
   const heroOffers = [
     {
@@ -88,6 +38,11 @@ const Home = () => {
       title: 'Electronics Fest',
       subtitle: 'Flat ₹500 Off on Smart Watches',
       image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800',
+    },
+    {
+      title: 'Fitness Special',
+      subtitle: 'Gym Equipment Starting ₹299',
+      image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800',
     },
   ];
 
@@ -102,7 +57,7 @@ const Home = () => {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image,
+      image: product.image || product.images[0],
     });
     toast.success('Added to cart!');
   };
@@ -196,9 +151,9 @@ const Home = () => {
                   >
                     <Heart className="h-4 w-4" />
                   </Button>
-                  {product.badge && (
-                    <Badge className="absolute top-2 left-2 text-xs bg-red-500">
-                      {product.badge}
+                  {product.isNewArrival && (
+                    <Badge className="absolute top-2 left-2 text-xs bg-green-500">
+                      New Arrival
                     </Badge>
                   )}
                 </div>
@@ -230,11 +185,11 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Daily Deals */}
+      {/* New Arrivals */}
       <div className="p-4">
-        <h2 className="text-lg font-semibold mb-3">Daily Deals</h2>
+        <h2 className="text-lg font-semibold mb-3">New Arrivals</h2>
         <div className="space-y-3">
-          {dailyDeals.map((product) => (
+          {newArrivals.slice(0, 3).map((product) => (
             <Card key={product.id} className="cursor-pointer">
               <CardContent className="p-3">
                 <div className="flex space-x-3">
@@ -253,8 +208,8 @@ const Home = () => {
                           <span className="text-sm text-gray-600">{product.rating}</span>
                         </div>
                       </div>
-                      <Badge variant="destructive" className="text-xs">
-                        {product.discount}
+                      <Badge className="text-xs bg-green-500">
+                        New
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between mt-2">
