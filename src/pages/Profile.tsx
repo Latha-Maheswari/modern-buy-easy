@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -207,10 +206,10 @@ const Profile = () => {
           </div>
           
           {[
-            { icon: Heart, label: 'Wishlist', action: () => console.log('Wishlist') },
-            { icon: Bell, label: 'Notifications', action: () => console.log('Notifications') },
-            { icon: Shield, label: 'Privacy & Security', action: () => console.log('Privacy & Security') },
-            { icon: HelpCircle, label: 'Help & Support', action: () => console.log('Help & Support') },
+            { icon: Heart, label: 'Wishlist', action: () => navigate('/wishlist') },
+            { icon: Bell, label: 'Notifications', action: () => navigate('/notifications') },
+            { icon: Shield, label: 'Privacy & Security', action: () => navigate('/privacy-security') },
+            { icon: HelpCircle, label: 'Help & Support', action: () => navigate('/help-support') },
           ].map((item, index) => {
             const Icon = item.icon;
             return (

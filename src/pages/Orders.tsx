@@ -1,14 +1,20 @@
-
 import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { useCart } from '../contexts/CartContext';
 import BottomNavigation from '../components/BottomNavigation';
+import OrderDetails from '../components/OrderDetails';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Package, MapPin, Clock, CheckCircle, Truck, RotateCcw } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
 
 const Orders = () => {
   const location = useLocation();
+  const { addItem } = useCart();
   const newOrder = location.state?.newOrder;
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
 
   // Mock orders data
   const orders = [
@@ -78,6 +84,30 @@ const Orders = () => {
       ]
     },
   ];
+
+  const handleViewDetails = (order: any) => {
+    setSelectedOrder(order);
+    setIsOrderDetailsOpen(true);
+  };
+
+  const handleReorder = (order: any) => {
+    // Add all items from the order to cart
+    order.products.forEach((product: any) => {
+      for (let i = 0; i < product.quantity; i++) {
+        addItem({
+          id: product.id || Math.random().toString(),
+          name: product.name,
+          price: parseFloat(order.total.replace('$', '')) / order.products.length, // Mock price calculation
+          image: product.image
+        });
+      }
+    });
+
+    toast({
+      title: "Items Added to Cart",
+      description: `${order.products.length} items from order #${order.id} have been added to your cart.`,
+    });
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -185,11 +215,21 @@ const Orders = () => {
 
                   {/* Action Buttons */}
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleViewDetails(order)}
+                    >
                       View Details
                     </Button>
                     {order.status === 'delivered' && (
-                      <Button variant="outline" size="sm" className="flex-1">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleReorder(order)}
+                      >
                         Reorder
                       </Button>
                     )}
@@ -205,6 +245,14 @@ const Orders = () => {
           ))}
         </div>
       )}
+
+      {/* Order Details Modal */}
+      <OrderDetails
+        isOpen={isOrderDetailsOpen}
+        onClose={() => setIsOrderDetailsOpen(false)}
+        order={selectedOrder}
+        onReorder={handleReorder}
+      />
 
       <BottomNavigation />
     </div>

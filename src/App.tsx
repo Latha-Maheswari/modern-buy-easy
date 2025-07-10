@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -18,6 +17,10 @@ import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
 import SellerBackend from "./pages/SellerBackend";
 import NotFound from "./pages/NotFound";
+import Wishlist from "./pages/Wishlist";
+import Notifications from "./pages/Notifications";
+import PrivacySecurity from "./pages/PrivacySecurity";
+import HelpSupport from "./pages/HelpSupport";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +68,26 @@ const App = () => (
               <Route path="/profile" element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/wishlist" element={
+                <ProtectedRoute>
+                  <Wishlist />
+                </ProtectedRoute>
+              } />
+              <Route path="/notifications" element={
+                <ProtectedRoute>
+                  <Notifications />
+                </ProtectedRoute>
+              } />
+              <Route path="/privacy-security" element={
+                <ProtectedRoute>
+                  <PrivacySecurity />
+                </ProtectedRoute>
+              } />
+              <Route path="/help-support" element={
+                <ProtectedRoute>
+                  <HelpSupport />
                 </ProtectedRoute>
               } />
               {/* Hidden seller backend - no auth required */}
