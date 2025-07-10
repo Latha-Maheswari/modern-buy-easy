@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -71,7 +70,10 @@ const AddressManager = () => {
 
   const handleEdit = (address: Address) => {
     setEditingAddress(address);
-    setFormData(address);
+    setFormData({
+      ...address,
+      landmark: address.landmark || ''
+    });
     setIsModalOpen(true);
   };
 
