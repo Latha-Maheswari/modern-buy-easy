@@ -19,14 +19,30 @@ const ProductListing = () => {
   const [sortBy, setSortBy] = useState('featured');
 
   const searchQuery = searchParams.get('q');
-  const title = searchQuery ? `Search: "${searchQuery}"` : `${category?.charAt(0).toUpperCase()}${category?.slice(1)}`;
+  
+  // Map route categories to actual category names
+  const categoryMap: { [key: string]: string } = {
+    'makeup-beauty': 'Makeup & Beauty',
+    'electronics': 'Electronics',
+    'home-decor': 'Home Decor',
+    'gym-fitness': 'Gym & Fitness',
+    'bags': 'Bags',
+    'books': 'Books'
+  };
+
+  const actualCategory = category ? categoryMap[category] || category : undefined;
+  const title = searchQuery 
+    ? `Search: "${searchQuery}"` 
+    : actualCategory 
+    ? actualCategory
+    : 'All Products';
 
   // Get products based on category or search
   let displayProducts = [];
   if (searchQuery) {
     displayProducts = searchProducts(searchQuery);
-  } else if (category) {
-    displayProducts = getProductsByCategory(category.replace('-', ' '));
+  } else if (actualCategory) {
+    displayProducts = getProductsByCategory(actualCategory);
   } else {
     displayProducts = products;
   }
@@ -168,15 +184,27 @@ const ProductListing = () => {
 
       {/* Products */}
       <div className="p-4">
-        <div className={
-          viewMode === 'grid' 
-            ? 'grid grid-cols-2 gap-3' 
-            : 'space-y-3'
-        }>
-          {sortedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {sortedProducts.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No products found in this category.</p>
+            <Button 
+              onClick={() => navigate('/home')} 
+              className="mt-4 bg-orange-500 hover:bg-orange-600"
+            >
+              Back to Home
+            </Button>
+          </div>
+        ) : (
+          <div className={
+            viewMode === 'grid' 
+              ? 'grid grid-cols-2 gap-3' 
+              : 'space-y-3'
+          }>
+            {sortedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
 
       <BottomNavigation />

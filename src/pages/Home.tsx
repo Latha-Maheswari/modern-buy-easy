@@ -17,12 +17,12 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const categories = [
-    { name: 'Makeup & Beauty', icon: '💄', color: 'bg-pink-100 text-pink-800' },
-    { name: 'Electronics', icon: '📱', color: 'bg-blue-100 text-blue-800' },
-    { name: 'Home Decor', icon: '🏠', color: 'bg-green-100 text-green-800' },
-    { name: 'Gym & Fitness', icon: '💪', color: 'bg-orange-100 text-orange-800' },
-    { name: 'Bags', icon: '👜', color: 'bg-purple-100 text-purple-800' },
-    { name: 'Books', icon: '📚', color: 'bg-indigo-100 text-indigo-800' },
+    { name: 'Makeup & Beauty', icon: '💄', color: 'bg-pink-100 text-pink-800', route: 'makeup-beauty' },
+    { name: 'Electronics', icon: '📱', color: 'bg-blue-100 text-blue-800', route: 'electronics' },
+    { name: 'Home Decor', icon: '🏠', color: 'bg-green-100 text-green-800', route: 'home-decor' },
+    { name: 'Gym & Fitness', icon: '💪', color: 'bg-orange-100 text-orange-800', route: 'gym-fitness' },
+    { name: 'Bags', icon: '👜', color: 'bg-purple-100 text-purple-800', route: 'bags' },
+    { name: 'Books', icon: '📚', color: 'bg-indigo-100 text-indigo-800', route: 'books' },
   ];
 
   const featuredProducts = getFeaturedProducts();
@@ -60,6 +60,10 @@ const Home = () => {
       image: product.image || product.images[0],
     });
     toast.success('Added to cart!');
+  };
+
+  const handleCategoryClick = (categoryRoute: string) => {
+    navigate(`/category/${categoryRoute}`);
   };
 
   return (
@@ -114,7 +118,7 @@ const Home = () => {
             <Card
               key={category.name}
               className="cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate(`/category/${category.name.toLowerCase().replace(/\s+/g, '-')}`)}
+              onClick={() => handleCategoryClick(category.route)}
             >
               <CardContent className="p-4 text-center">
                 <div className="text-2xl mb-2">{category.icon}</div>
