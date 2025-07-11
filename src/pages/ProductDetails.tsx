@@ -2,11 +2,12 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
+import WishlistButton from '../components/WishlistButton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Heart, Share2, Star, ShoppingCart, Zap, Shield, Truck } from 'lucide-react';
+import { ArrowLeft, Share2, Star, ShoppingCart, Zap, Shield, Truck } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
 import { getProductById } from '../data/products';
@@ -85,9 +86,11 @@ const ProductDetails = () => {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="sm">
-              <Heart className="h-4 w-4" />
-            </Button>
+            <WishlistButton
+              product={product}
+              size="default"
+              className="bg-white hover:bg-gray-100"
+            />
             <Button variant="ghost" size="sm">
               <Share2 className="h-4 w-4" />
             </Button>

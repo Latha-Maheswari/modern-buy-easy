@@ -8,18 +8,29 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, MapPin, CreditCard, Truck, Shield } from 'lucide-react';
+import { ArrowLeft, MapPin, CreditCard, Truck, Shield, AlertCircle } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
-  const [selectedAddress, setSelectedAddress] = useState('default');
-  const [selectedPayment, setSelectedPayment] = useState('card');
+  const [hasAddress, setHasAddress] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePlaceOrder = async () => {
+    // Validation
+    if (!hasAddress) {
+      toast.error('Please add a delivery address before placing your order.');
+      return;
+    }
+
+    if (!selectedPayment) {
+      toast.error('Please select a payment method before placing your order.');
+      return;
+    }
+
     setIsProcessing(true);
     
     // Simulate order processing
@@ -48,6 +59,8 @@ const Checkout = () => {
   const tax = totalPrice * 0.08;
   const total = subtotal + tax;
 
+  const isOrderValid = hasAddress && selectedPayment;
+
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       {/* Header */}
@@ -72,16 +85,38 @@ const Checkout = () => {
             <CardTitle className="flex items-center text-lg">
               <MapPin className="h-5 w-5 mr-2" />
               Delivery Address
+              {!hasAddress && <AlertCircle className="h-4 w-4 ml-2 text-red-500" />}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-4">
-              <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-              <p className="text-gray-600 mb-3">No address added yet</p>
-              <Button variant="outline" size="sm">
-                Add Delivery Address
-              </Button>
-            </div>
+            {!hasAddress ? (
+              <div className="text-center py-4">
+                <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-600 mb-3">No address added yet</p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setHasAddress(true)}
+                >
+                  Add Delivery Address
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="p-3 border rounded-lg bg-green-50 border-green-200">
+                  <p className="font-medium">Home</p>
+                  <p className="text-sm text-gray-600">123 Main Street, City, State 12345</p>
+                  <p className="text-sm text-gray-600">Phone: +91 9876543210</p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setHasAddress(false)}
+                >
+                  Change Address
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -91,6 +126,7 @@ const Checkout = () => {
             <CardTitle className="flex items-center text-lg">
               <CreditCard className="h-5 w-5 mr-2" />
               Payment Method
+              {!selectedPayment && <AlertCircle className="h-4 w-4 ml-2 text-red-500" />}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -102,6 +138,26 @@ const Checkout = () => {
                   <div>
                     <span className="font-medium">Credit/Debit Card</span>
                     <p className="text-sm text-gray-600">Add card details</p>
+                  </div>
+                </Label>
+              </div>
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="upi" id="upi" />
+                <Label htmlFor="upi" className="flex items-center cursor-pointer flex-1">
+                  <div className="h-4 w-4 mr-2 bg-blue-500 rounded-full"></div>
+                  <div>
+                    <span className="font-medium">UPI</span>
+                    <p className="text-sm text-gray-600">Pay using UPI ID</p>
+                  </div>
+                </Label>
+              </div>
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="cod" id="cod" />
+                <Label htmlFor="cod" className="flex items-center cursor-pointer flex-1">
+                  <div className="h-4 w-4 mr-2 bg-green-500 rounded-full"></div>
+                  <div>
+                    <span className="font-medium">Cash on Delivery</span>
+                    <p className="text-sm text-gray-600">Pay when you receive</p>
                   </div>
                 </Label>
               </div>
@@ -131,8 +187,32 @@ const Checkout = () => {
                 </div>
               </div>
             )}
+
+            {selectedPayment === 'upi' && (
+              <div className="mt-4">
+                <Label htmlFor="upiId">UPI ID</Label>
+                <Input id="upiId" placeholder="yourname@paytm" />
+              </div>
+            )}
           </CardContent>
         </Card>
+
+        {/* Validation Alert */}
+        {!isOrderValid && (
+          <Card className="border-orange-200 bg-orange-50">
+            <CardContent className="p-4">
+              <div className="flex items-center">
+                <AlertCircle className="h-5 w-5 text-orange-600 mr-3" />
+                <div>
+                  <p className="font-medium text-orange-800">Complete Required Steps</p>
+                  <p className="text-sm text-orange-700">
+                    Please complete all required steps before placing your order.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Order Items */}
         <Card>
@@ -219,11 +299,20 @@ const Checkout = () => {
           </div>
           <Button
             onClick={handlePlaceOrder}
-            disabled={isProcessing}
-            className="w-full bg-orange-500 hover:bg-orange-600 h-12 text-lg font-semibold"
+            disabled={isProcessing || !isOrderValid}
+            className={`w-full h-12 text-lg font-semibold ${
+              isOrderValid 
+                ? 'bg-orange-500 hover:bg-orange-600' 
+                : 'bg-gray-300 cursor-not-allowed'
+            }`}
           >
             {isProcessing ? 'Processing...' : 'Place Order'}
           </Button>
+          {!isOrderValid && (
+            <p className="text-sm text-gray-500 text-center">
+              Complete address and payment details to continue
+            </p>
+          )}
         </div>
       </div>
 

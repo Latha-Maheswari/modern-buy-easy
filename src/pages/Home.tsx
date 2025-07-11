@@ -2,11 +2,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
+import WishlistButton from '../components/WishlistButton';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Search, Star, Heart, ChevronRight } from 'lucide-react';
+import { Search, Star, ChevronRight } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
 import { getFeaturedProducts, getNewArrivals } from '../data/products';
@@ -16,6 +17,7 @@ const Home = () => {
   const { addItem } = useCart();
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Categories with products - only show if they have products
   const categories = [
     { name: 'Makeup & Beauty', icon: '💄', color: 'bg-pink-100 text-pink-800', route: 'makeup-beauty' },
     { name: 'Electronics', icon: '📱', color: 'bg-blue-100 text-blue-800', route: 'electronics' },
@@ -30,7 +32,7 @@ const Home = () => {
 
   const heroOffers = [
     {
-      title: 'Monsoon Sale',
+      title: 'New Year Sale 2025',
       subtitle: 'Up to 50% Off on Beauty Products',
       image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800',
     },
@@ -148,13 +150,10 @@ const Home = () => {
                     className="w-full h-32 object-cover rounded-lg"
                     onClick={() => navigate(`/product/${product.id}`)}
                   />
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="absolute top-2 right-2 h-8 w-8 p-0 bg-white/80 hover:bg-white"
-                  >
-                    <Heart className="h-4 w-4" />
-                  </Button>
+                  <WishlistButton
+                    product={product}
+                    className="absolute top-2 right-2"
+                  />
                   {product.isNewArrival && (
                     <Badge className="absolute top-2 left-2 text-xs bg-green-500">
                       New Arrival
@@ -212,9 +211,10 @@ const Home = () => {
                           <span className="text-sm text-gray-600">{product.rating}</span>
                         </div>
                       </div>
-                      <Badge className="text-xs bg-green-500">
-                        New
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge className="text-xs bg-green-500">New</Badge>
+                        <WishlistButton product={product} />
+                      </div>
                     </div>
                     <div className="flex items-center justify-between mt-2">
                       <div>

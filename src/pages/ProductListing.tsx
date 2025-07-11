@@ -1,11 +1,11 @@
-
 import { useState } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
+import WishlistButton from '../components/WishlistButton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Filter, Grid, List, Star, Heart } from 'lucide-react';
+import { ArrowLeft, Filter, Grid, List, Star } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
 import { getProductsByCategory, searchProducts, products } from '../data/products';
@@ -84,13 +84,10 @@ const ProductListing = () => {
               }`}
               onClick={() => navigate(`/product/${product.id}`)}
             />
-            <Button
-              size="sm"
-              variant="ghost"
-              className="absolute top-2 right-2 h-8 w-8 p-0 bg-white/80 hover:bg-white"
-            >
-              <Heart className="h-4 w-4" />
-            </Button>
+            <WishlistButton
+              product={product}
+              className="absolute top-2 right-2"
+            />
             {!product.inStock && (
               <Badge variant="secondary" className="absolute bottom-2 left-2 text-xs">
                 Out of Stock

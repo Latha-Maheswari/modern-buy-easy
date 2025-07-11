@@ -1,47 +1,17 @@
 
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 import BottomNavigation from '../components/BottomNavigation';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Heart, ShoppingCart, Trash2, ArrowLeft } from 'lucide-react';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
 
 const Wishlist = () => {
   const navigate = useNavigate();
   const { addItem } = useCart();
-  const [wishlistItems, setWishlistItems] = useState([
-    {
-      id: '1',
-      name: 'Wireless Earbuds',
-      price: 1299,
-      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
-      inStock: true
-    },
-    {
-      id: '2',
-      name: 'Smart Watch',
-      price: 2499,
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200',
-      inStock: true
-    },
-    {
-      id: '3',
-      name: 'Bluetooth Speaker',
-      price: 1999,
-      image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=200',
-      inStock: false
-    }
-  ]);
-
-  const removeFromWishlist = (id: string) => {
-    setWishlistItems(prev => prev.filter(item => item.id !== id));
-    toast({
-      title: "Removed from Wishlist",
-      description: "Item has been removed from your wishlist.",
-    });
-  };
+  const { wishlistItems, removeFromWishlist } = useWishlist();
 
   const addToCart = (item: any) => {
     addItem({
@@ -50,10 +20,7 @@ const Wishlist = () => {
       price: item.price,
       image: item.image
     });
-    toast({
-      title: "Added to Cart",
-      description: `${item.name} has been added to your cart.`,
-    });
+    toast.success(`${item.name} has been added to your cart.`);
   };
 
   return (
@@ -80,7 +47,7 @@ const Wishlist = () => {
           <Heart className="h-20 w-20 text-gray-300 mb-4" />
           <h2 className="text-xl font-semibold text-gray-600 mb-2">Your wishlist is empty</h2>
           <p className="text-gray-500 text-center mb-6">
-            Add items you love to your wishlist
+            Start adding products you love!
           </p>
           <Button onClick={() => navigate('/home')}>
             Continue Shopping
@@ -95,11 +62,13 @@ const Wishlist = () => {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-20 h-20 object-cover rounded"
+                    className="w-20 h-20 object-cover rounded cursor-pointer"
+                    onClick={() => navigate(`/product/${item.id}`)}
                   />
                   <div className="flex-1">
                     <h3 className="font-medium text-gray-900">{item.name}</h3>
                     <p className="text-lg font-semibold text-orange-600">₹{item.price.toLocaleString()}</p>
+                    <p className="text-sm text-gray-500 line-through">₹{item.originalPrice.toLocaleString()}</p>
                     <p className={`text-sm ${item.inStock ? 'text-green-600' : 'text-red-600'}`}>
                       {item.inStock ? 'In Stock' : 'Out of Stock'}
                     </p>
