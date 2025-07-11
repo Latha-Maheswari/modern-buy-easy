@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { AuthProvider } from './contexts/AuthContext';
@@ -10,8 +11,7 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import Wishlist from './pages/Wishlist';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+import Auth from './pages/Auth';
 
 function App() {
   return (
@@ -21,8 +21,8 @@ function App() {
           <Router>
             <div className="App">
               <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+                <Route path="/" element={<Auth />} />
+                <Route path="/auth" element={<Auth />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/category/:category" element={<ProductListing />} />
                 <Route path="/product/:id" element={<ProductDetails />} />
