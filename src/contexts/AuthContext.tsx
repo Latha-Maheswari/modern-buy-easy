@@ -1,10 +1,10 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface User {
   id: string;
   email: string;
   name: string;
+  phone?: string;
 }
 
 interface AuthContextType {
@@ -39,7 +39,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const mockUser = {
       id: '1',
       email,
-      name: email.split('@')[0]
+      name: email.split('@')[0],
+      phone: undefined
     };
     
     setUser(mockUser);
@@ -57,7 +58,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const mockUser = {
       id: '1',
       email,
-      name
+      name,
+      phone: undefined
     };
     
     setUser(mockUser);
