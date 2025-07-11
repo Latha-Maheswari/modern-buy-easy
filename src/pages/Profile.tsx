@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,11 +20,7 @@ import {
   Shield, 
   LogOut,
   ChevronRight,
-  Edit,
-  Eye,
-  Star,
-  Truck,
-  CheckCircle
+  Edit
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -33,30 +30,6 @@ const Profile = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
-  // Mock recent orders data
-  const recentOrders = [
-    {
-      id: 'ORD001',
-      status: 'Delivered',
-      date: '2024-01-15',
-      total: '₹1,299',
-      items: [
-        { name: 'Wireless Earbuds', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200' }
-      ],
-      statusColor: 'text-green-600'
-    },
-    {
-      id: 'ORD002',
-      status: 'Processing',
-      date: '2024-01-12',
-      total: '₹2,499',
-      items: [
-        { name: 'Smart Watch', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200' }
-      ],
-      statusColor: 'text-blue-600'
-    }
-  ];
-
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -64,14 +37,6 @@ const Profile = () => {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'delivered': return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'processing': return <Truck className="h-4 w-4 text-blue-600" />;
-      default: return <Package className="h-4 w-4 text-gray-600" />;
-    }
   };
 
   return (
@@ -93,10 +58,10 @@ const Profile = () => {
             <div className="flex-1">
               <h2 className="text-xl font-semibold">{user?.name || 'User'}</h2>
               <p className="text-gray-600">{user?.email}</p>
-              <p className="text-gray-600">+91 9876543210</p>
+              <p className="text-gray-600">Mobile not added</p>
               <div className="flex items-center mt-2">
                 <span className="bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">
-                  Premium Member
+                  New Member
                 </span>
               </div>
             </div>
@@ -115,76 +80,40 @@ const Profile = () => {
       <div className="grid grid-cols-3 gap-4 px-4 mb-4">
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-orange-600">15</div>
+            <div className="text-2xl font-bold text-orange-600">0</div>
             <div className="text-xs text-gray-600">Total Orders</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-pink-600">8</div>
+            <div className="text-2xl font-bold text-pink-600">0</div>
             <div className="text-xs text-gray-600">Wishlist Items</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">4.5</div>
-            <div className="text-xs text-gray-600 flex items-center justify-center gap-1">
-              <Star className="h-3 w-3 fill-current" />
-              Reviews
-            </div>
+            <div className="text-2xl font-bold text-green-600">-</div>
+            <div className="text-xs text-gray-600">Reviews</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Recent Orders */}
+      {/* Empty Orders Section */}
       <Card className="m-4">
-        <CardContent className="p-0">
-          <div className="p-4 border-b flex items-center justify-between">
-            <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-              <Package className="h-5 w-5" />
-              Recent Orders
-            </h3>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/orders')}
-              className="text-orange-600"
-            >
-              View All
-            </Button>
-          </div>
-          
-          {recentOrders.map((order) => (
-            <div key={order.id} className="p-4 border-b last:border-b-0">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  {getStatusIcon(order.status)}
-                  <span className="font-medium">#{order.id}</span>
-                </div>
-                <span className={`text-sm font-medium ${order.statusColor}`}>
-                  {order.status}
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <img
-                  src={order.items[0].image}
-                  alt={order.items[0].name}
-                  className="w-12 h-12 object-cover rounded"
-                />
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{order.items[0].name}</p>
-                  <p className="text-xs text-gray-600">{order.date}</p>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold">{order.total}</p>
-                  <Button variant="ghost" size="sm">
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
+        <CardContent className="p-6 text-center">
+          <Package className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+          <h3 className="font-semibold text-gray-900 mb-2">No Orders Yet</h3>
+          <p className="text-gray-600 text-sm mb-4">
+            Your order history will appear here after you make your first purchase
+          </p>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate('/home')}
+            className="text-orange-600"
+          >
+            Start Shopping
+          </Button>
         </CardContent>
       </Card>
 

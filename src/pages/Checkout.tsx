@@ -15,33 +15,9 @@ import { toast } from 'sonner';
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
-  const [selectedAddress, setSelectedAddress] = useState('home');
+  const [selectedAddress, setSelectedAddress] = useState('default');
   const [selectedPayment, setSelectedPayment] = useState('card');
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const addresses = [
-    {
-      id: 'home',
-      label: 'Home',
-      address: '123 Main Street, Apt 4B, New York, NY 10001',
-      isDefault: true,
-    },
-    {
-      id: 'work',
-      label: 'Work',
-      address: '456 Business Ave, Suite 200, New York, NY 10002',
-      isDefault: false,
-    },
-  ];
-
-  const paymentMethods = [
-    {
-      id: 'card',
-      label: 'Credit/Debit Card',
-      icon: CreditCard,
-      details: '**** **** **** 1234',
-    },
-  ];
 
   const handlePlaceOrder = async () => {
     setIsProcessing(true);
@@ -99,29 +75,13 @@ const Checkout = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <RadioGroup value={selectedAddress} onValueChange={setSelectedAddress}>
-              {addresses.map((address) => (
-                <div key={address.id} className="flex items-start space-x-3">
-                  <RadioGroupItem value={address.id} id={address.id} className="mt-1" />
-                  <div className="flex-1">
-                    <Label htmlFor={address.id} className="cursor-pointer">
-                      <div className="flex items-center">
-                        <span className="font-medium">{address.label}</span>
-                        {address.isDefault && (
-                          <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded ml-2">
-                            Default
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600 mt-1">{address.address}</p>
-                    </Label>
-                  </div>
-                </div>
-              ))}
-            </RadioGroup>
-            <Button variant="outline" size="sm" className="mt-3">
-              Add New Address
-            </Button>
+            <div className="text-center py-4">
+              <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+              <p className="text-gray-600 mb-3">No address added yet</p>
+              <Button variant="outline" size="sm">
+                Add Delivery Address
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
@@ -135,21 +95,16 @@ const Checkout = () => {
           </CardHeader>
           <CardContent>
             <RadioGroup value={selectedPayment} onValueChange={setSelectedPayment}>
-              {paymentMethods.map((method) => {
-                const Icon = method.icon;
-                return (
-                  <div key={method.id} className="flex items-center space-x-3">
-                    <RadioGroupItem value={method.id} id={method.id} />
-                    <Label htmlFor={method.id} className="flex items-center cursor-pointer flex-1">
-                      <Icon className="h-4 w-4 mr-2" />
-                      <div>
-                        <span className="font-medium">{method.label}</span>
-                        <p className="text-sm text-gray-600">{method.details}</p>
-                      </div>
-                    </Label>
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="card" id="card" />
+                <Label htmlFor="card" className="flex items-center cursor-pointer flex-1">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  <div>
+                    <span className="font-medium">Credit/Debit Card</span>
+                    <p className="text-sm text-gray-600">Add card details</p>
                   </div>
-                );
-              })}
+                </Label>
+              </div>
             </RadioGroup>
 
             {selectedPayment === 'card' && (
@@ -197,7 +152,7 @@ const Checkout = () => {
                     <h4 className="font-medium text-sm">{item.name}</h4>
                     <p className="text-xs text-gray-600">Qty: {item.quantity}</p>
                   </div>
-                  <span className="font-medium">${(item.price * item.quantity).toFixed(2)}</span>
+                  <span className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
               {items.length > 2 && (
@@ -218,7 +173,7 @@ const Checkout = () => {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span>Shipping</span>
@@ -226,12 +181,12 @@ const Checkout = () => {
               </div>
               <div className="flex justify-between text-sm">
                 <span>Tax</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>₹{tax.toFixed(2)}</span>
               </div>
               <Separator />
               <div className="flex justify-between font-semibold text-lg">
                 <span>Total</span>
-                <span className="text-blue-600">${total.toFixed(2)}</span>
+                <span className="text-blue-600">₹{total.toFixed(2)}</span>
               </div>
             </div>
 
@@ -260,7 +215,7 @@ const Checkout = () => {
       <div className="fixed bottom-16 left-0 right-0 bg-white border-t p-4 z-10">
         <div className="max-w-md mx-auto space-y-3">
           <div className="text-center">
-            <p className="text-lg font-semibold">Total: ${total.toFixed(2)}</p>
+            <p className="text-lg font-semibold">Total: ₹{total.toFixed(2)}</p>
           </div>
           <Button
             onClick={handlePlaceOrder}

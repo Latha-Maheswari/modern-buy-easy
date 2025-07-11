@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ShoppingBag, Mail, Lock, User } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -13,6 +14,9 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [isResetLoading, setIsResetLoading] = useState(false);
   const { login, register, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -45,6 +49,27 @@ const Auth = () => {
       navigate('/home');
     } else {
       toast.error('Registration failed. Please try again.');
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      toast.error('Please enter your email address');
+      return;
+    }
+
+    setIsResetLoading(true);
+    try {
+      // Simulate password reset functionality
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      toast.success('Password reset link sent to your email!');
+      setIsForgotPasswordOpen(false);
+      setResetEmail('');
+    } catch (error) {
+      toast.error('Failed to send reset link. Please try again.');
+    } finally {
+      setIsResetLoading(false);
     }
   };
 
@@ -110,7 +135,12 @@ const Auth = () => {
                     {isLoading ? 'Signing In...' : 'Sign In'}
                   </Button>
                   
-                  <Button variant="link" className="w-full text-sm text-gray-600">
+                  <Button 
+                    type="button"
+                    variant="link" 
+                    className="w-full text-sm text-gray-600"
+                    onClick={() => setIsForgotPasswordOpen(true)}
+                  >
                     Forgot Password?
                   </Button>
                 </form>
@@ -166,6 +196,50 @@ const Auth = () => {
             </Tabs>
           </CardContent>
         </Card>
+
+        {/* Forgot Password Modal */}
+        <Dialog open={isForgotPasswordOpen} onOpenChange={setIsForgotPasswordOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Reset Password</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm text-gray-600">
+                  Enter your email address and we'll send you a link to reset your password.
+                </p>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    type="email"
+                    placeholder="Email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsForgotPasswordOpen(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isResetLoading}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                >
+                  {isResetLoading ? 'Sending...' : 'Send Reset Link'}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

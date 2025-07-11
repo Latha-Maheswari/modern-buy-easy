@@ -105,7 +105,7 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ isOpen, onClose, order, onR
                 }
               </p>
               <p className="text-xs text-blue-600 mt-1">
-                123 Main Street, Apartment 4B, Mumbai, Maharashtra 400001
+                Will be delivered to your default address
               </p>
             </div>
           )}

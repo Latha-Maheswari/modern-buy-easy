@@ -1,3 +1,4 @@
+
 import { useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { useCart } from '../contexts/CartContext';
@@ -16,74 +17,30 @@ const Orders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [isOrderDetailsOpen, setIsOrderDetailsOpen] = useState(false);
 
-  // Mock orders data
-  const orders = [
-    ...(newOrder ? [{
-      id: newOrder.id,
-      date: new Date().toLocaleDateString(),
-      total: newOrder.total,
-      status: 'confirmed',
-      items: newOrder.items,
-      deliveryDate: 'Dec 12, 2024',
-      products: [
-        {
-          name: 'Wireless Headphones',
-          image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
-          quantity: 1,
-        }
-      ]
-    }] : []),
-    {
-      id: 'ORD789012',
-      date: 'Dec 8, 2024',
-      total: '149.98',
-      status: 'delivered',
-      items: 2,
-      deliveryDate: 'Dec 10, 2024',
-      products: [
-        {
-          name: 'Smart Watch',
-          image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200',
-          quantity: 1,
-        },
-        {
-          name: 'Phone Case',
-          image: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=200',
-          quantity: 1,
-        }
-      ]
-    },
-    {
-      id: 'ORD456789',
-      date: 'Dec 5, 2024',
-      total: '79.99',
-      status: 'shipped',
-      items: 1,
-      deliveryDate: 'Dec 11, 2024',
-      products: [
-        {
-          name: 'Laptop Backpack',
-          image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=200',
-          quantity: 1,
-        }
-      ]
-    },
-    {
-      id: 'ORD123456',
-      date: 'Dec 1, 2024',
-      total: '199.99',
-      status: 'cancelled',
-      items: 1,
-      deliveryDate: 'Cancelled',
-      products: [
-        {
-          name: 'Wireless Speaker',
-          image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=200',
-          quantity: 1,
-        }
-      ]
-    },
-  ];
+  // Only show orders that come from actual checkout
+  const orders = newOrder ? [{
+    id: newOrder.id,
+    date: new Date().toLocaleDateString('en-IN', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    }),
+    total: newOrder.total,
+    status: 'confirmed',
+    items: newOrder.items,
+    deliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    }),
+    products: [
+      {
+        name: 'Recent Purchase',
+        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
+        quantity: newOrder.items || 1,
+      }
+    ]
+  }] : [];
 
   const handleViewDetails = (order: any) => {
     setSelectedOrder(order);
@@ -97,7 +54,7 @@ const Orders = () => {
         addItem({
           id: product.id || Math.random().toString(),
           name: product.name,
-          price: parseFloat(order.total.replace('$', '')) / order.products.length, // Mock price calculation
+          price: parseFloat(order.total.replace('₹', '').replace(',', '')) / order.products.length,
           image: product.image
         });
       }
@@ -151,7 +108,7 @@ const Orders = () => {
           <Package className="h-20 w-20 text-gray-300 mb-4" />
           <h2 className="text-xl font-semibold text-gray-600 mb-2">No orders yet</h2>
           <p className="text-gray-500 text-center mb-6">
-            Your order history will appear here
+            Your order history will appear here after you make your first purchase
           </p>
         </div>
       ) : (
@@ -198,7 +155,7 @@ const Orders = () => {
                 <div className="border-t pt-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm text-gray-600">Total Amount</span>
-                    <span className="font-semibold">${order.total}</span>
+                    <span className="font-semibold">₹{order.total}</span>
                   </div>
                   
                   {order.status !== 'cancelled' && (
