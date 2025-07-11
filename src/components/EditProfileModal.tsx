@@ -19,12 +19,52 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: '+91 9876543210', // Mock phone number
+    phone: user?.phone || '',
   });
   const [profileImage, setProfileImage] = useState<string>('');
 
   const handleSave = () => {
-    // Mock save functionality
+    // Validate required fields
+    if (!formData.name.trim()) {
+      toast({
+        title: "Name Required",
+        description: "Please enter your full name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      toast({
+        title: "Email Required",
+        description: "Please enter your email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Phone validation (optional but if provided, should be valid)
+    if (formData.phone && formData.phone.length < 10) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid phone number.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Mock save functionality - in real app, this would call API
     toast({
       title: "Profile Updated",
       description: "Your profile has been updated successfully.",
@@ -35,6 +75,26 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please select an image smaller than 5MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please select a valid image file.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setProfileImage(e.target?.result as string);
@@ -56,7 +116,7 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
             <Avatar className="h-24 w-24">
               <AvatarImage src={profileImage} />
               <AvatarFallback className="bg-orange-500 text-white text-2xl">
-                {formData.name.charAt(0).toUpperCase()}
+                {formData.name.charAt(0).toUpperCase() || 'U'}
               </AvatarFallback>
             </Avatar>
             
@@ -72,36 +132,47 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
                 Change Photo
               </Button>
             </label>
+            <p className="text-xs text-gray-500 text-center">
+              Upload a photo to personalize your profile
+            </p>
           </div>
 
           {/* Form Fields */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name">Full Name *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                placeholder="Enter your full name"
+                required
               />
             </div>
             
             <div>
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">Email Address *</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                placeholder="Enter your email address"
+                required
               />
             </div>
             
             <div>
-              <Label htmlFor="phone">Mobile Number</Label>
+              <Label htmlFor="phone">Phone Number</Label>
               <Input
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="Enter your phone number"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Optional - for order updates and delivery notifications
+              </p>
             </div>
           </div>
 
