@@ -13,6 +13,11 @@ import Orders from './pages/Orders';
 import Wishlist from './pages/Wishlist';
 import Profile from './pages/Profile';
 import Auth from './pages/Auth';
+import HelpSupport from './pages/HelpSupport';
+import PrivacySecurity from './pages/PrivacySecurity';
+import SaleInfo from './pages/SaleInfo';
+import Notifications from './pages/Notifications';
+import Categories from './pages/Categories';
 
 function App() {
   return (
@@ -32,6 +37,11 @@ function App() {
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/help-support" element={<HelpSupport />} />
+                <Route path="/privacy-security" element={<PrivacySecurity />} />
+                <Route path="/sale-info" element={<SaleInfo />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/categories" element={<Categories />} />
               </Routes>
               <Toaster position="top-center" />
             </div>

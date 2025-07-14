@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BottomNavigation from '../components/BottomNavigation';
 import { Button } from '@/components/ui/button';
@@ -8,20 +8,41 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, MapPin, CreditCard, Truck, Shield, AlertCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, CreditCard, Truck, Shield, AlertCircle, Plus } from 'lucide-react';
 import { useCart } from '../contexts/CartContext';
 import { toast } from 'sonner';
+import { useAuth } from '../contexts/AuthContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const Checkout = () => {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
-  const [hasAddress, setHasAddress] = useState(false);
+  const { user } = useAuth();
+  const [selectedAddress, setSelectedAddress] = useState<any>(null);
   const [selectedPayment, setSelectedPayment] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+
+  // Load saved addresses
+  useEffect(() => {
+    if (user?.id) {
+      const addresses = localStorage.getItem(`addresses_${user.id}`);
+      if (addresses) {
+        const parsedAddresses = JSON.parse(addresses);
+        setSavedAddresses(parsedAddresses);
+        // Auto-select default address if exists
+        const defaultAddress = parsedAddresses.find((addr: any) => addr.isDefault);
+        if (defaultAddress) {
+          setSelectedAddress(defaultAddress);
+        }
+      }
+    }
+  }, [user?.id]);
 
   const handlePlaceOrder = async () => {
     // Validation
-    if (!hasAddress) {
+    if (!selectedAddress) {
       toast.error('Please add a delivery address before placing your order.');
       return;
     }
@@ -59,7 +80,7 @@ const Checkout = () => {
   const tax = totalPrice * 0.08;
   const total = subtotal + tax;
 
-  const isOrderValid = hasAddress && selectedPayment;
+  const isOrderValid = selectedAddress && selectedPayment;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
@@ -85,33 +106,47 @@ const Checkout = () => {
             <CardTitle className="flex items-center text-lg">
               <MapPin className="h-5 w-5 mr-2" />
               Delivery Address
-              {!hasAddress && <AlertCircle className="h-4 w-4 ml-2 text-red-500" />}
+              {!selectedAddress && <AlertCircle className="h-4 w-4 ml-2 text-red-500" />}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {!hasAddress ? (
+            {!selectedAddress ? (
               <div className="text-center py-4">
                 <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-gray-600 mb-3">No address added yet</p>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => setHasAddress(true)}
-                >
-                  Add Delivery Address
-                </Button>
+                <p className="text-gray-600 mb-3">No address selected</p>
+                <div className="space-y-2">
+                  {savedAddresses.length > 0 ? (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setIsAddressDialogOpen(true)}
+                    >
+                      Choose from Saved Addresses
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => navigate('/profile')}
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Add Delivery Address
+                    </Button>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="space-y-3">
                 <div className="p-3 border rounded-lg bg-green-50 border-green-200">
-                  <p className="font-medium">Home</p>
-                  <p className="text-sm text-gray-600">123 Main Street, City, State 12345</p>
-                  <p className="text-sm text-gray-600">Phone: +91 9876543210</p>
+                  <p className="font-medium">{selectedAddress.type}</p>
+                  <p className="text-sm text-gray-600">{selectedAddress.street}</p>
+                  <p className="text-sm text-gray-600">{selectedAddress.city}, {selectedAddress.state} {selectedAddress.zipCode}</p>
+                  <p className="text-sm text-gray-600">Phone: {selectedAddress.phone}</p>
                 </div>
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => setHasAddress(false)}
+                  onClick={() => setIsAddressDialogOpen(true)}
                 >
                   Change Address
                 </Button>
@@ -315,6 +350,58 @@ const Checkout = () => {
           )}
         </div>
       </div>
+
+      {/* Address Selection Dialog */}
+      <Dialog open={isAddressDialogOpen} onOpenChange={setIsAddressDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Select Delivery Address</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-60 overflow-y-auto">
+            {savedAddresses.map((address) => (
+              <div
+                key={address.id}
+                className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+                  selectedAddress?.id === address.id 
+                    ? 'border-blue-500 bg-blue-50' 
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+                onClick={() => {
+                  setSelectedAddress(address);
+                  setIsAddressDialogOpen(false);
+                }}
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-medium">{address.type}</span>
+                  {address.isDefault && (
+                    <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                      Default
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-gray-600">{address.street}</p>
+                <p className="text-sm text-gray-600">{address.city}, {address.state} {address.zipCode}</p>
+                <p className="text-sm text-gray-600">Phone: {address.phone}</p>
+              </div>
+            ))}
+            {savedAddresses.length === 0 && (
+              <div className="text-center py-4">
+                <p className="text-gray-500 mb-3">No saved addresses found</p>
+                <Button 
+                  onClick={() => {
+                    setIsAddressDialogOpen(false);
+                    navigate('/profile');
+                  }}
+                  size="sm"
+                  className="bg-orange-500 hover:bg-orange-600"
+                >
+                  Add New Address
+                </Button>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <BottomNavigation />
     </div>

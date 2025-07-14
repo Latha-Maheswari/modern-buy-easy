@@ -32,7 +32,7 @@ const Auth = () => {
       toast.success('Welcome back!');
       navigate('/home');
     } else {
-      toast.error('Login failed. Please try again.');
+      toast.error('Account not found. Please sign up first or check your credentials.');
     }
   };
 
@@ -48,7 +48,7 @@ const Auth = () => {
       toast.success('Account created successfully!');
       navigate('/home');
     } else {
-      toast.error('Registration failed. Please try again.');
+      toast.error('Account already exists, please log in!');
     }
   };
 
@@ -82,8 +82,8 @@ const Auth = () => {
               <ShoppingBag className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">ShopEase</h1>
-          <p className="text-gray-600 mt-2">Welcome to your shopping paradise</p>
+          <h1 className="text-3xl font-bold text-gray-900">BUY EVERYTHING</h1>
+          <p className="text-gray-600 mt-2">Your Ultimate Shopping Destination! 🎉</p>
         </div>
 
         <Card className="shadow-lg">

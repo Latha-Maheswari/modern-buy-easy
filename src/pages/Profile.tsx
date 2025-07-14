@@ -22,7 +22,9 @@ import {
   LogOut,
   ChevronRight,
   Edit,
-  Trash2
+  Trash2,
+  Tag,
+  Settings
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -183,6 +185,7 @@ const Profile = () => {
             { icon: Bell, label: 'Notifications', action: () => navigate('/notifications') },
             { icon: Shield, label: 'Privacy & Security', action: () => navigate('/privacy-security') },
             { icon: HelpCircle, label: 'Help & Support', action: () => navigate('/help-support') },
+            { icon: Tag, label: 'Sale Info', action: () => navigate('/sale-info') },
           ].map((item, index) => {
             const Icon = item.icon;
             return (
@@ -197,7 +200,7 @@ const Profile = () => {
                   </div>
                   <ChevronRight className="h-4 w-4 text-gray-400" />
                 </button>
-                {index < 4 && <Separator />}
+                {index < 5 && <Separator />}
               </div>
             );
           })}
