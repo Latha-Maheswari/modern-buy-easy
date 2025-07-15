@@ -10,9 +10,10 @@ interface OrderDetailsProps {
   onClose: () => void;
   order: any;
   onReorder: (order: any) => void;
+  onCancel?: (orderId: string) => void;
 }
 
-const OrderDetails: React.FC<OrderDetailsProps> = ({ isOpen, onClose, order, onReorder }) => {
+const OrderDetails: React.FC<OrderDetailsProps> = ({ isOpen, onClose, order, onReorder, onCancel }) => {
   if (!order) return null;
 
   const getStatusIcon = (status: string) => {
@@ -148,10 +149,14 @@ const OrderDetails: React.FC<OrderDetailsProps> = ({ isOpen, onClose, order, onR
                 Reorder
               </Button>
             )}
-            {order.status === 'confirmed' && (
+            {order.status === 'confirmed' && onCancel && (
               <Button 
                 variant="outline" 
                 className="flex-1 text-red-600 hover:text-red-700"
+                onClick={() => {
+                  onCancel(order.id);
+                  onClose();
+                }}
               >
                 Cancel Order
               </Button>

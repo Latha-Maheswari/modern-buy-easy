@@ -7,6 +7,7 @@ import OrderDetails from '../components/OrderDetails';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Package, MapPin, Clock, CheckCircle, Truck, RotateCcw } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -33,13 +34,11 @@ const Orders = () => {
       month: 'short', 
       day: 'numeric' 
     }),
-    products: [
-      {
-        name: 'Recent Purchase',
-        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
-        quantity: newOrder.items || 1,
-      }
-    ]
+    products: newOrder.products || [{
+      name: newOrder.productName || 'Recent Purchase',
+      image: newOrder.productImage || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200',
+      quantity: newOrder.items || 1,
+    }]
   }] : [];
 
   const handleViewDetails = (order: any) => {
@@ -47,11 +46,23 @@ const Orders = () => {
     setIsOrderDetailsOpen(true);
   };
 
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  const [orderToCancel, setOrderToCancel] = useState<string | null>(null);
+
   const handleCancelOrder = (orderId: string) => {
-    toast({
-      title: "Order Cancelled",
-      description: `Order #${orderId} has been cancelled successfully.`,
-    });
+    setOrderToCancel(orderId);
+    setIsCancelDialogOpen(true);
+  };
+
+  const confirmCancelOrder = () => {
+    if (orderToCancel) {
+      toast({
+        title: "Order Cancelled",
+        description: `Order #${orderToCancel} has been cancelled successfully.`,
+      });
+      setIsCancelDialogOpen(false);
+      setOrderToCancel(null);
+    }
   };
 
   const handleReorder = (order: any) => {
@@ -221,7 +232,37 @@ const Orders = () => {
         onClose={() => setIsOrderDetailsOpen(false)}
         order={selectedOrder}
         onReorder={handleReorder}
+        onCancel={handleCancelOrder}
       />
+
+      {/* Cancel Order Confirmation Dialog */}
+      <Dialog open={isCancelDialogOpen} onOpenChange={setIsCancelDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Cancel Order</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <p className="text-gray-600">
+              💬 "Are you sure you want to cancel this order? We'd hate to see it go, but we're here if you change your mind!"
+            </p>
+          </div>
+          <DialogFooter className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setIsCancelDialogOpen(false)}
+              className="flex-1"
+            >
+              Keep Order
+            </Button>
+            <Button
+              onClick={confirmCancelOrder}
+              className="flex-1 bg-red-600 hover:bg-red-700"
+            >
+              Confirm Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <BottomNavigation />
     </div>

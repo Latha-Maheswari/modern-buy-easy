@@ -15,7 +15,7 @@ interface EditProfileModalProps {
 }
 
 const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -64,7 +64,8 @@ const EditProfileModal = ({ isOpen, onClose }: EditProfileModalProps) => {
       return;
     }
 
-    // Mock save functionality - in real app, this would call API
+    // Update user profile
+    updateProfile(formData);
     toast({
       title: "Profile Updated",
       description: "Your profile has been updated successfully.",

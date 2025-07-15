@@ -112,24 +112,6 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Categories */}
-      <div className="p-4">
-        <h2 className="text-lg font-semibold mb-3">Shop by Category</h2>
-        <div className="grid grid-cols-3 gap-3">
-          {categories.map((category) => (
-            <Card
-              key={category.name}
-              className="cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => handleCategoryClick(category.route)}
-            >
-              <CardContent className="p-4 text-center">
-                <div className="text-2xl mb-2">{category.icon}</div>
-                <p className="text-xs font-medium">{category.name}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
 
       {/* Best Sellers */}
       <div className="p-4">
