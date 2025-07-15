@@ -9,8 +9,9 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, name: string) => Promise<boolean>;
+  login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  register: (email: string, password: string, name: string) => Promise<{ success: boolean; message?: string }>;
+  updateProfile: (updates: Partial<User>) => void;
   logout: () => void;
   isLoading: boolean;
 }
@@ -30,7 +31,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
     setIsLoading(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -43,14 +44,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(existingUser);
       localStorage.setItem('shopease_user', JSON.stringify(existingUser));
       setIsLoading(false);
-      return true;
+      return { success: true };
     } else {
       setIsLoading(false);
-      return false; // User not found
+      return { success: false, message: "No account found with this email. Please sign up first!" };
     }
   };
 
-  const register = async (email: string, password: string, name: string): Promise<boolean> => {
+  const register = async (email: string, password: string, name: string): Promise<{ success: boolean; message?: string }> => {
     setIsLoading(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -61,7 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     if (userExists) {
       setIsLoading(false);
-      return false; // User already exists
+      return { success: false, message: "Account already exists, please log in!" };
     }
     
     // Mock successful registration
@@ -79,7 +80,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(mockUser);
     localStorage.setItem('shopease_user', JSON.stringify(mockUser));
     setIsLoading(false);
-    return true;
+    return { success: true };
+  };
+
+  const updateProfile = (updates: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      localStorage.setItem('shopease_user', JSON.stringify(updatedUser));
+      
+      // Also update in users list
+      const existingUsers = JSON.parse(localStorage.getItem('shopease_users') || '[]');
+      const updatedUsers = existingUsers.map((u: User) => 
+        u.id === user.id ? updatedUser : u
+      );
+      localStorage.setItem('shopease_users', JSON.stringify(updatedUsers));
+    }
   };
 
   const logout = () => {
@@ -88,7 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, register, updateProfile, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

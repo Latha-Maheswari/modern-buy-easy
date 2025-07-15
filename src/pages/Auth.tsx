@@ -27,12 +27,12 @@ const Auth = () => {
       return;
     }
     
-    const success = await login(email, password);
-    if (success) {
+    const result = await login(email, password);
+    if (result.success) {
       toast.success('Welcome back!');
       navigate('/home');
     } else {
-      toast.error('Account not found. Please sign up first or check your credentials.');
+      toast.error(result.message || 'Login failed. Please try again.');
     }
   };
 
@@ -43,12 +43,12 @@ const Auth = () => {
       return;
     }
     
-    const success = await register(email, password, name);
-    if (success) {
+    const result = await register(email, password, name);
+    if (result.success) {
       toast.success('Account created successfully!');
       navigate('/home');
     } else {
-      toast.error('Account already exists, please log in!');
+      toast.error(result.message || 'Registration failed. Please try again.');
     }
   };
 

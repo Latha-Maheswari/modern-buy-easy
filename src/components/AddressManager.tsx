@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +22,7 @@ interface Address {
 }
 
 const AddressManager = () => {
+  const { user } = useAuth();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
@@ -33,6 +35,23 @@ const AddressManager = () => {
     pincode: '',
     landmark: '',
   });
+
+  // Load saved addresses from localStorage
+  useEffect(() => {
+    if (user?.id) {
+      const savedAddresses = localStorage.getItem(`addresses_${user.id}`);
+      if (savedAddresses) {
+        setAddresses(JSON.parse(savedAddresses));
+      }
+    }
+  }, [user?.id]);
+
+  // Save addresses to localStorage whenever addresses change
+  useEffect(() => {
+    if (user?.id && addresses.length >= 0) {
+      localStorage.setItem(`addresses_${user.id}`, JSON.stringify(addresses));
+    }
+  }, [addresses, user?.id]);
 
   const handleSaveAddress = () => {
     if (!formData.name || !formData.phone || !formData.address || !formData.city || !formData.state || !formData.pincode) {

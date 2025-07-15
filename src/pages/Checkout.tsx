@@ -40,6 +40,10 @@ const Checkout = () => {
     }
   }, [user?.id]);
 
+  const addNewAddress = () => {
+    navigate('/profile?tab=addresses');
+  };
+
   const handlePlaceOrder = async () => {
     // Validation
     if (!selectedAddress) {
@@ -127,7 +131,7 @@ const Checkout = () => {
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={() => navigate('/profile')}
+                      onClick={addNewAddress}
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Delivery Address
@@ -138,10 +142,20 @@ const Checkout = () => {
             ) : (
               <div className="space-y-3">
                 <div className="p-3 border rounded-lg bg-green-50 border-green-200">
-                  <p className="font-medium">{selectedAddress.type}</p>
-                  <p className="text-sm text-gray-600">{selectedAddress.street}</p>
-                  <p className="text-sm text-gray-600">{selectedAddress.city}, {selectedAddress.state} {selectedAddress.zipCode}</p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <p className="font-medium">{selectedAddress.name}</p>
+                    {selectedAddress.isDefault && (
+                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                        Default
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600">{selectedAddress.address}</p>
+                  <p className="text-sm text-gray-600">{selectedAddress.city}, {selectedAddress.state} - {selectedAddress.pincode}</p>
                   <p className="text-sm text-gray-600">Phone: {selectedAddress.phone}</p>
+                  {selectedAddress.landmark && (
+                    <p className="text-xs text-gray-500">Landmark: {selectedAddress.landmark}</p>
+                  )}
                 </div>
                 <Button 
                   variant="outline" 
@@ -372,16 +386,19 @@ const Checkout = () => {
                 }}
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium">{address.type}</span>
+                  <span className="font-medium">{address.name}</span>
                   {address.isDefault && (
                     <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
                       Default
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-600">{address.street}</p>
-                <p className="text-sm text-gray-600">{address.city}, {address.state} {address.zipCode}</p>
+                <p className="text-sm text-gray-600">{address.address}</p>
+                <p className="text-sm text-gray-600">{address.city}, {address.state} - {address.pincode}</p>
                 <p className="text-sm text-gray-600">Phone: {address.phone}</p>
+                {address.landmark && (
+                  <p className="text-xs text-gray-500">Landmark: {address.landmark}</p>
+                )}
               </div>
             ))}
             {savedAddresses.length === 0 && (
@@ -390,7 +407,7 @@ const Checkout = () => {
                 <Button 
                   onClick={() => {
                     setIsAddressDialogOpen(false);
-                    navigate('/profile');
+                    addNewAddress();
                   }}
                   size="sm"
                   className="bg-orange-500 hover:bg-orange-600"

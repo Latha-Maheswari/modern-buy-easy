@@ -47,6 +47,13 @@ const Orders = () => {
     setIsOrderDetailsOpen(true);
   };
 
+  const handleCancelOrder = (orderId: string) => {
+    toast({
+      title: "Order Cancelled",
+      description: `Order #${orderId} has been cancelled successfully.`,
+    });
+  };
+
   const handleReorder = (order: any) => {
     // Add all items from the order to cart
     order.products.forEach((product: any) => {
@@ -191,8 +198,13 @@ const Orders = () => {
                       </Button>
                     )}
                     {order.status === 'confirmed' && (
-                      <Button variant="outline" size="sm" className="flex-1 text-red-600 hover:text-red-700">
-                        Cancel
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="flex-1 text-red-600 hover:text-red-700"
+                        onClick={() => handleCancelOrder(order.id)}
+                      >
+                        Cancel Order
                       </Button>
                     )}
                   </div>
